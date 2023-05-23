@@ -88,21 +88,26 @@ class Api extends CI_Controller
             $insert = $this->db->insert('barangMasuk', $data);
 
             if ($insert) {
+                $dataResult = $this->db->get_where('barangMasuk', ['kodeBarang' => $data['kodeBarang']])->row();
                 $status = true;
+                $dataResult = null;
                 $msg = "Berhasil tambah data";
             } else {
                 $status = false;
+                $dataResult = null;
                 $msg = "Gagal tambah data";
             }
         }else{
             $status = false;
+            $dataResult = null;
             $msg = "Gagal tambah data, silahkan ini form.";
         }
 
         header('content-type: application/json');
         echo json_encode(array(
             'message'   => $msg,
-            'status'    => $status
+            'status'    => $status,
+            'data'      => $dataResult
         ));
     }
     
