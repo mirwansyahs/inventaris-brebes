@@ -82,7 +82,7 @@ class Api extends CI_Controller
         echo json_encode(array(
             'message'   => $msg,
             'status'    => $status
-        ))
+        ));
     }
     
     private function _kodeBarang($kategoriBarang)
