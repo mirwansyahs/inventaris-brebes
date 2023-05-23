@@ -13,29 +13,39 @@ class Api extends CI_Controller
 	public function scanqr()
 	{
 		$inputData = $this->input->post();
-		$inputData = explode("/", $inputData['url']);
-		$kodeBarang = dekrip(end($inputData));
+        if (@$inputData){
+            $inputData = explode("/", $inputData['url']);
+            $kodeBarang = dekrip(end($inputData));
 
-		if ($kodeBarang) {
-			$this->db->where('kodeBarang', false);
-			$barang = $this->db->get('barangMasuk')->row();
+            if ($kodeBarang) {
+                $this->db->where('kodeBarang', false);
+                $barang = $this->db->get('barangMasuk')->row();
 
-			$this->db->select('helpdesk.*');
-			$this->db->join('barangKeluar', 'barangKeluar.id = helpdesk.idBarangKeluar', ' inner');
-			$this->db->join('barangMasuk', 'barangMasuk.kodeBarang = barangKeluar.kodeBarang', 'inner');
+                $this->db->select('helpdesk.*');
+                $this->db->join('barangKeluar', 'barangKeluar.id = helpdesk.idBarangKeluar', ' inner');
+                $this->db->join('barangMasuk', 'barangMasuk.kodeBarang = barangKeluar.kodeBarang', 'inner');
 
-			$this->db->order_by('helpdesk.tanggal', 'desc');
+                $this->db->order_by('helpdesk.tanggal', 'desc');
 
-			$riwayat = $this->db->get('helpdesk')->result();
-		} else {
-			$barang = null;
-			$riwayat = null;
-		}
+                $riwayat = $this->db->get('helpdesk')->result();
+                $message = "Barang ditemukan";
+            } else {
+                $barang = null;
+                $riwayat = null;
+                $message = "Kode barang tidak ditemukan";
+            }
+        }else{
+            $barang = null;
+            $riwayat = null;
+            $message = "Parameter URL tidak dikirim";
+
+        }
 
 		$data = [
 			'title'   => 'Scan Detail Barang',
 			'barang'  => $barang,
-			'riwayat' => $riwayat
+			'riwayat' => $riwayat,
+            'message' => $message
 		];
 
         header('content-type: application/json');
