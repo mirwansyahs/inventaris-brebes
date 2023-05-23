@@ -29,14 +29,17 @@ class Api extends CI_Controller
 
                 $riwayat = $this->db->get('helpdesk')->result();
                 $message = "Barang ditemukan";
+                $status = true;
             } else {
                 $barang = null;
                 $riwayat = null;
+                $status = false;
                 $message = "Kode barang tidak ditemukan";
             }
         }else{
             $barang = null;
             $riwayat = null;
+            $status = false;
             $message = "Parameter URL tidak dikirim";
 
         }
@@ -45,7 +48,8 @@ class Api extends CI_Controller
 			'title'   => 'Scan Detail Barang',
 			'barang'  => $barang,
 			'riwayat' => $riwayat,
-            'message' => $message
+            'message' => $message,
+            'status'    => $status
 		];
 
         header('content-type: application/json');
@@ -64,28 +68,35 @@ class Api extends CI_Controller
 
     public function addBarangMasuk()
     {
-        $kodeBarang = $this->_kodeBarang($this->input->post('kategoriBarang'));
+        $dataInput = $this->input->post();
 
-        $codeQR = $this->_codeQR($kodeBarang);
+        if (@$dataInput){
+            $kodeBarang = $this->_kodeBarang($dataInput['kategoriBarang']);
 
-        $data = [
-            'kategoriBarang' => $this->input->post('kategoriBarang'),
-            'kodeBarang'     => $kodeBarang,
-            'namaBarang'     => $this->input->post('namaBarang'),
-            'tanggalMasuk'   => $this->input->post('tanggalMasuk'),
-            'stok'           => $this->input->post('stok'),
-            'gambar'         => "",
-            'codeQR'         => $codeQR
-        ];
+            $codeQR = $this->_codeQR($kodeBarang);
 
-        $insert = $this->db->insert('barangMasuk', $data);
+            $data = [
+                'kategoriBarang' => $dataInput['kategoriBarang'],
+                'kodeBarang'     => $kodeBarang,
+                'namaBarang'     => $dataInput['namaBarang'],
+                'tanggalMasuk'   => $dataInput['tanggalMasuk'],
+                'stok'           => $dataInput['stok'],
+                'gambar'         => "",
+                'codeQR'         => $codeQR
+            ];
 
-        if ($insert) {
-            $status = true;
-            $msg = "Berhasil tambah data";
-        } else {
+            $insert = $this->db->insert('barangMasuk', $data);
+
+            if ($insert) {
+                $status = true;
+                $msg = "Berhasil tambah data";
+            } else {
+                $status = false;
+                $msg = "Gagal tambah data";
+            }
+        }else{
             $status = false;
-            $msg = "Gagal tambah data";
+            $msg = "Gagal tambah data, silahkan ini form.";
         }
 
         header('content-type: application/json');
