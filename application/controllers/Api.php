@@ -88,9 +88,9 @@ class Api extends CI_Controller
             $insert = $this->db->insert('barangMasuk', $data);
 
             if ($insert) {
-                $dataResult = $this->db->get_where('barangMasuk', ['kodeBarang' => $data['kodeBarang']])->row();
+                $idBarang = $this->db->insert_id();
+                $dataResult = $this->db->get_where('barangMasuk', ['id' => $idBarang])->row();
                 $status = true;
-                $dataResult = null;
                 $msg = "Berhasil tambah data";
             } else {
                 $status = false;
