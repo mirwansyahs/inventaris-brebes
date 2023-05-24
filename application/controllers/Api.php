@@ -25,7 +25,7 @@ class Api extends CI_Controller
                 $this->db->join('barangKeluar', 'barangKeluar.id = helpdesk.idBarangKeluar', ' inner');
                 $this->db->join('barangMasuk', 'barangMasuk.kodeBarang = barangKeluar.kodeBarang', 'inner');
 
-                $this->db->where('barangMasuk.kodeBarang', $kodeBarang)
+                $this->db->where('barangMasuk.kodeBarang', $kodeBarang);
 
                 $this->db->order_by('helpdesk.tanggal', 'desc');
 
