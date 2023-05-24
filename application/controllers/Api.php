@@ -18,12 +18,14 @@ class Api extends CI_Controller
             $kodeBarang = dekrip(end($inputData));
 
             if ($kodeBarang) {
-                $this->db->where('kodeBarang', false);
+                $this->db->where('kodeBarang', $kodeBarang);
                 $barang = $this->db->get('barangMasuk')->row();
 
                 $this->db->select('helpdesk.*');
                 $this->db->join('barangKeluar', 'barangKeluar.id = helpdesk.idBarangKeluar', ' inner');
                 $this->db->join('barangMasuk', 'barangMasuk.kodeBarang = barangKeluar.kodeBarang', 'inner');
+
+                $this->db->where('barangMasuk.kodeBarang', $kodeBarang)
 
                 $this->db->order_by('helpdesk.tanggal', 'desc');
 
